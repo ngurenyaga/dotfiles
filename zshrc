@@ -103,10 +103,10 @@ export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 source /usr/local/bin/virtualenvwrapper.sh
 
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/home/gandalf/google-cloud-sdk/path.bash.inc' ]; then . '/home/gandalf/google-cloud-sdk/path.bash.inc'; fi
+# if [ -f '/home/gandalf/google-cloud-sdk/path.bash.inc' ]; then . '/home/gandalf/google-cloud-sdk/path.bash.inc'; fi
 
 # The next line enables shell command completion for gcloud.
-if [ -f '/home/gandalf/google-cloud-sdk/completion.bash.inc' ]; then . '/home/gandalf/google-cloud-sdk/completion.bash.inc'; fi
+# if [ -f '/home/gandalf/google-cloud-sdk/completion.bash.inc' ]; then . '/home/gandalf/google-cloud-sdk/completion.bash.inc'; fi
 
 if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
       exec tmux
