@@ -253,3 +253,5 @@ nmap 0 ^
 set autoread
 set autowrite
 
+" limit file searching to code
+set path=/Code
