@@ -249,3 +249,7 @@ set wrapmargin=0
 " map 0 to go to the start of the line
 nmap 0 ^
 
+" read and write changes automatically
+set autoread
+set autowrite
+
