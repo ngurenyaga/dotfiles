@@ -128,7 +128,10 @@ if executable('ag')
     set grepformat=%f:%l:%c%m
     " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
     let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-    let g:ctrlp_use_caching = 1
+
+    " ag is fast enough
+    " disabling the cache removes the need to reindex frequently
+    let g:ctrlp_use_caching = 0
 endif
 
 " run black on save for Python files
