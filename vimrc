@@ -246,3 +246,6 @@ set nolist  " list disables linebreak
 set textwidth=0
 set wrapmargin=0
 
+" map 0 to go to the start of the line
+nmap 0 ^
+
