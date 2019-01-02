@@ -31,6 +31,9 @@ Plugin 'christoomey/vim-tmux-runner' " integrate Vim and tmux
 Plugin 'tpope/vim-commentary' " comment and uncomment stuff
 Plugin 'scrooloose/nerdcommenter' " another plugin to comment and uncomment
 Plugin 'tpope/vim-surround' " simplify surrounding code
+Plugin 'tpope/vim-repeat'  " support . for plugin commands too
+Plugin 'mgedmin/python-imports.vim' " help with adding Python imports
+Plugin 'ervandew/supertab'  " code completion using Tab
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -132,6 +135,11 @@ if executable('ag')
     " ag is fast enough
     " disabling the cache removes the need to reindex frequently
     let g:ctrlp_use_caching = 0
+
+    if !exists(":Ag")
+        command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
+        nnoremap \ :Ag<SPACE>
+    endif
 endif
 
 " run black on save for Python files
@@ -168,6 +176,7 @@ autocmd QuickFixCmdPost *grep* cwindow
 
 " configure ale (asynchronous linting engine)
 let g:ale_completion_enabled = 1
+let g:ale_lint_on_text_changed = 0
 let g:airline#extensions#ale#enabled = 1
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
@@ -196,21 +205,37 @@ set wildmode=list:longest
 set visualbell
 set ttyfast
 set backspace=indent,eol,start
-set laststatus=2
+set laststatus=2 " always display the status line
+set noswapfile
+set nobackup
+set nowritebackup
+set history=100
+
+" Display extra whitespace
+set list listchars=tab:»·,trail:·,nbsp:-
+
+" Use one space, not two, after punctuation.
+set nojoinspaces
 
 " improve regex handling
 nnoremap / /\v
 vnoremap / /\v
 
-" turn off arrow keys to force discipline on myself
-nnoremap <up> <nop>
-nnoremap <down> <nop>
-nnoremap <left> <nop>
-nnoremap <right> <nop>
-inoremap <up> <nop>
-inoremap <down> <nop>
-inoremap <left> <nop>
-inoremap <right> <nop>
+" When the type of shell script is /bin/sh, assume a POSIX-compatible
+" shell for syntax highlighting purposes.
+let g:is_posix = 1
+
+" turn off arrow keys for insert mode nav to force discipline on myself
+" Move between linting errors
+nnoremap ]r :ALENextWrap<CR>
+nnoremap [r :ALEPreviousWrap<CR>
+
+" Python fixers
+let g:ale_fixers = {'python': ['autopep8', 'isort', 'remove_trailing_lines', 'trim_whitespace', 'add_blank_lines_for_python_control_statements']}
+
+" When the type of shell script is /bin/sh, assume a POSIX-compatible
+" " shell for syntax highlighting purposes.
+let g:is_posix = 1
 
 " make j and k move by file line instead of screen line
 nnoremap j gj
@@ -227,8 +252,8 @@ nnoremap ; :
 " save buffer contents on lost focus
 au FocusLost * :wa
 
-" remap leader
-let mapleader = "<Space>"
+" remap leader to space
+let mapleader = " "
 
 " zoom a vim pane, <C-w>= to re-balance
 nnoremap <leader>- :wincmd _<cr>:wincmd \|<cr>
@@ -258,3 +283,45 @@ set autowrite
 
 " limit file searching to code
 set path=/Code
+
+" use F5 to import the name under the cursor
+map <F5>    :ImportName<CR>
+map <C-F5>  :ImportNameHere<CR>
+
+" navigate between splits with easier keybindings (no CTRL-W)
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
+" toggle paste mode with F2 and display it
+nnoremap <F2> :set invpaste paste?<CR>
+set pastetoggle=<F2>
+set showmode
+
+
+" Tab completion
+" will insert tab at beginning of line,
+" will use completion if not at beginning
+set wildmode=list:longest,list:full
+function! InsertTabWrapper()
+    let col = col('.') - 1
+    if !col || getline('.')[col - 1] !~ '\k'
+        return "\<Tab>"
+    else
+        return "\<C-p>"
+    endif
+endfunction
+inoremap <Tab> <C-r>=InsertTabWrapper()<CR>
+inoremap <S-Tab> <C-n>
+
+" Switch between the last two files
+nnoremap <Leader><Leader> <C-^>
+
+" Open new split panes to right and bottom, which feels more natural
+set splitbelow
+set splitright
+
+" Autocomplete with dictionary words when spell check is on
+set complete+=kspell
+
