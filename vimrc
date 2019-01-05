@@ -246,9 +246,6 @@ inoremap <F1> <ESC>
 nnoremap <F1> <ESC>
 vnoremap <F1> <ESC>
 
-" make the semicolon also act like a colon in normal mode
-nnoremap ; :
-
 " save buffer contents on lost focus
 au FocusLost * :wa
 
@@ -262,8 +259,9 @@ nnoremap <leader>= :wincmd =<cr>
 " strip all trailing whitespace in the curent file
 nnoremap <leader>W :%s/\s\+$//<cr>:let @/=''<CR>
 
-" use jk to leave insert mode
+" use jk to leave insert mode (and kj, a common typo)
 inoremap jk <ESC>
+inoremap kj <ESC>
 
 " turn on soft word wrapping but disable automatic linebreaks
 set wrap
@@ -324,4 +322,11 @@ set splitright
 
 " Autocomplete with dictionary words when spell check is on
 set complete+=kspell
+
+" disable folding by default
+set nofoldenable
+
+" rapid editing of vimrc
+nmap <leader>vr :sp $MYVIMRC<cr>
+nmap <leader>so :source $MYVIMRC<cr>
 
