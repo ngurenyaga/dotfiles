@@ -186,13 +186,12 @@ bar {
 assign [class="Terminal"] "1: Terminal"
 assign [class="Firefox"] "2: Firefox"
 assign [class="Gvim"] "3: Editor"
-# 3 is reserved for "scratch" i.e other applications
 assign [class="DBeaver"] "4: DBeaver"
 assign [class="Vmplayer"] "5: VMWare"
 assign [class="Evince"] "6: Evince"
 assign [class="Google-chrome"] "7: Chrome"
 assign [class="Pgadmin3"] "8: pgadmin3"
-assign [class="vlc"] "9: vlc"
+assign [class="libreoffice-calc"] "9: libreoffice"
 assign [class="Code"] "10: Code"
 
 # start commonly needed applications right away

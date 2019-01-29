@@ -9,12 +9,13 @@ call vundle#begin()
 Plugin 'gmarik/Vundle.vim' " package manager
 Plugin 'vim-scripts/indentpython.vim' " indentation script for Python
 Plugin 'vim-syntastic/syntastic' " syntax checking for Vim
-Plugin 'altercation/vim-colors-solarized' " color scheme
+Plugin 'lifepillar/vim-solarized8'  " modernization of Solarized
 Plugin 'ctrlpvim/ctrlp.vim' " fuzzy file finder
 Plugin 'tpope/vim-fugitive' " git wrapper
 Plugin 'tmux-plugins/vim-tmux-focus-events' " restore FocusGained and FocusLost events when working in tmux
-Plugin 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'} " improved status line for Vim
 Plugin 'ambv/black' " opinionated Python code formatter
+Plugin 'vim-airline/vim-airline' " status line
+Plugin 'vim-airline/vim-airline-themes'  " status line themes
 Plugin 'Quramy/tsuquyomi' " Typescript language server plugin
 Plugin 'leafgarland/typescript-vim' " Typescript syntax files for Vim
 Plugin 'pangloss/vim-javascript' " Javascript indentation and syntax
@@ -34,6 +35,12 @@ Plugin 'tpope/vim-surround' " simplify surrounding code
 Plugin 'tpope/vim-repeat'  " support . for plugin commands too
 Plugin 'mgedmin/python-imports.vim' " help with adding Python imports
 Plugin 'ervandew/supertab'  " code completion using Tab
+Plugin 'autozimu/LanguageClient-neovim'  " language server client
+Plugin 'junegunn/fzf' " Multi-entry selection UI to work with language server
+Plugin 'Shougo/deoplete.nvim' " asynchronous completion framework
+Plugin 'python-mode/python-mode' " Python coding environment
+Plugin 'roxma/nvim-yarp' " needed for deoplete to work in vim
+Plugin 'roxma/vim-hug-neovim-rpc' " needed for deoplete to work in vim
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -83,7 +90,7 @@ if has('gui_running')
   set guioptions-=L
 endif
 
-colorscheme solarized
+colorscheme solarized8
 set background=dark
 
 "python with virtualenv support
@@ -225,10 +232,19 @@ vnoremap / /\v
 " shell for syntax highlighting purposes.
 let g:is_posix = 1
 
-" turn off arrow keys for insert mode nav to force discipline on myself
 " Move between linting errors
 nnoremap ]r :ALENextWrap<CR>
 nnoremap [r :ALEPreviousWrap<CR>
+
+" Switch between the last two files
+nnoremap <Leader><Leader> <C-^>
+
+" Get off my lawn
+" turn off arrow keys for insert mode nav to force discipline on myself
+nnoremap <Left> :echoe "Use h"<CR>
+nnoremap <Right> :echoe "Use l"<CR>
+nnoremap <Up> :echoe "Use k"<CR>
+nnoremap <Down> :echoe "Use j"<CR>
 
 " Python fixers
 let g:ale_fixers = {'python': ['autopep8', 'isort', 'remove_trailing_lines', 'trim_whitespace', 'add_blank_lines_for_python_control_statements']}
@@ -320,9 +336,6 @@ nnoremap <Leader><Leader> <C-^>
 set splitbelow
 set splitright
 
-" Autocomplete with dictionary words when spell check is on
-set complete+=kspell
-
 " disable folding by default
 set nofoldenable
 
@@ -330,3 +343,32 @@ set nofoldenable
 nmap <leader>vr :sp $MYVIMRC<cr>
 nmap <leader>so :source $MYVIMRC<cr>
 
+" Bind `q` to close the buffer for help files
+autocmd Filetype help nnoremap <buffer> q :q<CR>
+
+" language client settings
+let g:LanguageClient_serverCommands = {
+    \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
+    \ 'javascript': ['/usr/local/bin/javascript-typescript-stdio'],
+    \ 'javascript.jsx': ['tcp://127.0.0.1:2089'],
+    \ 'python': ['/usr/local/bin/pyls'],
+    \ }
+
+nnoremap <F5> :call LanguageClient_contextMenu()<CR>
+nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
+
+" use deoplete asynchronous completion
+let g:deoplete#enable_at_startup = 1
+
+" Python 3 for Python mode
+let g:pymode_python = 'python3'
+
+" airline tab line
+let g:airline#extensions#tabline#enabled = 1
+
+" nvim specific customizations
+if has("nvim")
+    set inccommand=split
+endif
