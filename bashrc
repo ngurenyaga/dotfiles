@@ -192,3 +192,8 @@ export BASH_IT_RELOAD_LEGACY=1
 
 # Load Bash It
 source "$BASH_IT"/bash_it.sh
+
+# prefer Nvim
+alias vim=nvim
+alias vi=nvim
+
