@@ -40,7 +40,9 @@ Plugin 'junegunn/fzf' " Multi-entry selection UI to work with language server
 Plugin 'Shougo/deoplete.nvim' " asynchronous completion framework
 Plugin 'python-mode/python-mode' " Python coding environment
 Plugin 'roxma/nvim-yarp' " needed for deoplete to work in vim
-Plugin 'roxma/vim-hug-neovim-rpc' " needed for deoplete to work in vim
+Plugin 'roxma/vim-hug-neovim-rpc' " neded for deoplete to work in vim
+Plugin 'aserebryakov/vim-todo-lists' " manage todos
+Plugin 'dart-lang/dart-vim-plugin' " DART plugin
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -92,16 +94,6 @@ endif
 
 colorscheme solarized8
 set background=dark
-
-"python with virtualenv support
-py3 << EOF
-import os
-import sys
-if 'VIRTUAL_ENV' in os.environ and os.environ['VIRTUAL_ENV']:
-  project_base_dir = os.environ['VIRTUAL_ENV']
-  activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
-  exec(open(activate_this).read(), dict(__file__=activate_this))
-EOF
 
 " support graphically cycling through options
 set wildmenu
@@ -178,6 +170,9 @@ nmap <silent> <LEFT> :cprev<CR>
 " bind K to grep word under cursor
 nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 
+" <leader>h to clear highlights
+nnoremap <leader>h :noh<cr>
+
 " open a quickfix window after :grep
 autocmd QuickFixCmdPost *grep* cwindow
 
@@ -188,6 +183,14 @@ let g:airline#extensions#ale#enabled = 1
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+
+" ale for Javascript and standard
+let g:ale_linters = {
+\   'javascript': ['standard'],
+\}
+let g:ale_fixers = {'javascript': ['standard']}
+let g:ale_lint_on_save = 1
+let g:ale_fix_on_save = 1
 
 " automatically rebalance windows on vim resize
 autocmd VimResized * :wincmd =
@@ -309,10 +312,14 @@ nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
 " toggle paste mode with F2 and display it
-nnoremap <F2> :set invpaste paste?<CR>
-set pastetoggle=<F2>
-set showmode
+if !has('nvim')
+	nnoremap <F2> :set invpaste paste?<CR>
+	set pastetoggle=<F2>
+	set showmode
+endif
 
+" workaround for an nvim bug
+au InsertLeave * set nopaste
 
 " Tab completion
 " will insert tab at beginning of line,
@@ -372,3 +379,7 @@ let g:airline#extensions#tabline#enabled = 1
 if has("nvim")
     set inccommand=split
 endif
+
+" Dart plugin settings
+let dart_style_guide = 2  " Dart style guide syntax
+let dat_format_on_save = 1  " execute DartFmt on buffer save
